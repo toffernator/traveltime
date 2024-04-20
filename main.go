@@ -23,6 +23,13 @@ type OriginDestination struct {
 	Destination Place `json:"destination"`
 }
 
+type TransitRoute struct {
+	Origin                   Place  `json:"origin"`
+	Destination              Place  `json:"destination"`
+	TravelMode               string `json:"travelMode"`
+	ComputeAlternativeRoutes bool   `json:"computeAlternativeRoutes"`
+}
+
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -31,11 +38,13 @@ func main() {
 
 	apiKey := os.Getenv("GOOGLE_API_KEY")
 
-	originDestination := OriginDestination{
-		Origin:      Place{Address: "1800 Amphitheatre Parkway, Mountain View, CA 94043"},
-		Destination: Place{Address: "Sloat Blvd &, Upper Great Hwy, San Francisco, CA 94132"},
+	route := TransitRoute{
+		Origin:                   Place{Address: "Hietkamp Rotterdam"},
+		Destination:              Place{Address: "Cedar ING"},
+		TravelMode:               "TRANSIT",
+		ComputeAlternativeRoutes: true,
 	}
-	reqBody, err := json.Marshal(&originDestination)
+	reqBody, err := json.Marshal(&route)
 	if err != nil {
 		log.Fatalf("Failed to marshall body: %v", err)
 	}
@@ -43,7 +52,7 @@ func main() {
 	req, err := http.NewRequest(http.MethodPost, ComputeRoutesUrl, bytes.NewReader(reqBody))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Goog-Api-Key", apiKey)
-	req.Header.Set("X-Goog-FieldMask", "routes.duration,routes.distanceMeters")
+	req.Header.Set("X-Goog-FieldMask", "routes.localizedValues")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
