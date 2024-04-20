@@ -12,8 +12,9 @@
       let pkgs = nixpkgs.legacyPackages.${system};
       in {
 
-        devShells.default =
-          pkgs.mkShell { packages = with pkgs; [ go google-cloud-sdk ]; };
+        devShells.default = pkgs.mkShell {
+          packages = with pkgs; [ go google-cloud-sdk cobra-cli ];
+        };
       });
 }
 
