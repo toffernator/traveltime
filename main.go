@@ -39,8 +39,8 @@ func main() {
 	apiKey := os.Getenv("GOOGLE_API_KEY")
 
 	route := TransitRoute{
-		Origin:                   Place{Address: "Hietkamp Rotterdam"},
-		Destination:              Place{Address: "Cedar ING"},
+		Origin:                   Place{Address: "London"},
+		Destination:              Place{Address: "Paris"},
 		TravelMode:               "TRANSIT",
 		ComputeAlternativeRoutes: true,
 	}
