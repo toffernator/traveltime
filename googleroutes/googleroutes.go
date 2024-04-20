@@ -14,11 +14,17 @@ func CalculateTravelTime(ctx context.Context, origin *routingpb.Waypoint, destin
 	if err != nil {
 		return time.Duration(0), err
 	}
+	defer routesClient.Close()
 
 	req := &routingpb.ComputeRoutesRequest{
 		Origin:      origin,
 		Destination: destination,
 		TravelMode:  routingpb.RouteTravelMode_TRANSIT,
+		TransitPreferences: &routingpb.TransitPreferences{
+			// TODO: Calculate and report both
+			RoutingPreference: routingpb.TransitPreferences_FEWER_TRANSFERS,
+			// TODO: Allowed travelmodes
+		},
 	}
 
 	// ctx = metadata.AppendToOutgoingContext(ctx, "X-Goog-FieldMask", "routes.localizedValues")
