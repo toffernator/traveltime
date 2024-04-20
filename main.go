@@ -1,82 +1,43 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
+	"context"
 	"fmt"
-	"io"
-	"log"
-	"net/http"
 	"os"
 
-	"github.com/joho/godotenv"
+	routing "cloud.google.com/go/maps/routing/apiv2"
+	"cloud.google.com/go/maps/routing/apiv2/routingpb"
+	"google.golang.org/grpc/metadata"
 )
 
-const ComputeRoutesUrl = "https://routes.googleapis.com/directions/v2:computeRoutes"
-
-type Place struct {
-	Address string `json:"address"`
-}
-
-type OriginDestination struct {
-	Origin      Place `json:"origin"`
-	Destination Place `json:"destination"`
-}
-
-type TransitRoute struct {
-	Origin                   Place  `json:"origin"`
-	Destination              Place  `json:"destination"`
-	TravelMode               string `json:"travelMode"`
-	ComputeAlternativeRoutes bool   `json:"computeAlternativeRoutes"`
-}
-
 func main() {
-	err := godotenv.Load()
+	ctx := context.Background()
+	client, err := routing.NewRoutesClient(ctx)
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		os.Exit(1)
 	}
 
-	apiKey := os.Getenv("GOOGLE_API_KEY")
-
-	route := TransitRoute{
-		Origin:                   Place{Address: "London"},
-		Destination:              Place{Address: "Paris"},
-		TravelMode:               "TRANSIT",
-		ComputeAlternativeRoutes: true,
+	computeRoutesReq := routingpb.ComputeRoutesRequest{
+		Origin: &routingpb.Waypoint{
+			LocationType: &routingpb.Waypoint_PlaceId{
+				PlaceId: "ChIJeRpOeF67j4AR9ydy_PIzPuM",
+			},
+		},
+		Destination: &routingpb.Waypoint{
+			LocationType: &routingpb.Waypoint_PlaceId{
+				PlaceId: "ChIJG3kh4hq6j4AR_XuFQnV0_t8",
+			},
+		},
+		RoutingPreference: routingpb.RoutingPreference_TRAFFIC_AWARE,
+		TravelMode:        routingpb.RouteTravelMode_DRIVE,
 	}
-	reqBody, err := json.Marshal(&route)
+	ctx = metadata.AppendToOutgoingContext(ctx, "X-Goog-FieldMask", "*")
+	computeRoutesResponse, err := client.ComputeRoutes(ctx, &computeRoutesReq)
 	if err != nil {
-		log.Fatalf("Failed to marshall body: %v", err)
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		os.Exit(1)
 	}
-
-	req, err := http.NewRequest(http.MethodPost, ComputeRoutesUrl, bytes.NewReader(reqBody))
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-Goog-Api-Key", apiKey)
-	req.Header.Set("X-Goog-FieldMask", "routes.localizedValues")
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		log.Fatalf("%v", err)
-	}
-
-	defer resp.Body.Close()
-	respBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalf("%v", err)
-	}
-	fmt.Println(string(respBody))
+	fmt.Fprintf(os.Stdout, "response: %v\n", computeRoutesResponse)
 }
 
-func sourceDotEnv() (string, error) {
-	f, err := os.Open(".env")
-	if err != nil {
-		return "", err
-	}
-
-	contents, err := io.ReadAll(f)
-	if err != nil {
-		return "", err
-	}
-
-	return string(contents), nil
-}
