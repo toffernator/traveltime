@@ -1,30 +1,45 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
+	"context"
+	"fmt"
 	"os"
 
+	"cloud.google.com/go/maps/routing/apiv2/routingpb"
+	"example.com/googleroutes"
 	"github.com/spf13/cobra"
 )
 
-
-
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "example.com",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "traveltime",
+	Short: "Tool for calculating travel times from one address to other addresses.",
+	Long:  `TODO`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
+}
+
+var calculateCmd = &cobra.Command{
+	Use:   "calculate",
+	Short: "Calculate the traveltime between one address and many other addresses.",
+	Long:  "Calculate the traveltime between one address and many other addresses.",
+	Run: func(cmd *cobra.Command, args []string) {
+		origin := &routingpb.Waypoint{
+			LocationType: &routingpb.Waypoint_Address{
+				Address: args[0],
+			},
+		}
+
+		destination := &routingpb.Waypoint{
+			LocationType: &routingpb.Waypoint_Address{
+				Address: args[1],
+			},
+		}
+
+		duration, _ := googleroutes.CalculateTravelTime(context.TODO(), origin, destination)
+		fmt.Println(duration)
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -45,7 +60,5 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.AddCommand(calculateCmd)
 }
-
-
