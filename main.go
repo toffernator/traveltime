@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"sync"
 
@@ -39,8 +40,11 @@ var calculateCmd = &cobra.Command{
 			go func() {
 				defer wg.Done()
 
-				result, _ := ComputeTravelTime(ctx, origin, d)
-				fmt.Println(result)
+				if result, err := ComputeTravelTime(ctx, origin, d); err != nil {
+					log.Printf("Failed to compute travel time from %s to %s: %v", origin, d, err)
+				} else {
+					fmt.Println(result)
+				}
 			}()
 		}
 		wg.Wait()
