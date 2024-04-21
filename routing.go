@@ -60,6 +60,17 @@ func ComputeTravelTime(ctx context.Context, origin Address, destination Address,
 		}
 	}
 
+	if options.routingPreference == nil {
+		lessTransfers := LessTransfers
+		options.routingPreference = &lessTransfers
+	}
+	if options.allowedTravelModes == nil {
+		options.allowedTravelModes = &map[TravelMode]bool{
+			Rail: true,
+			Bus:  true,
+		}
+	}
+
 	return computeTravelTime(ctx, origin, destination, options)
 }
 
