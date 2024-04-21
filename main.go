@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
+	"fmt"
+	"log"
 	"os"
 
-	"example.com/cmd"
 	"github.com/spf13/cobra"
 )
 
@@ -17,10 +19,24 @@ var rootCmd = &cobra.Command{
 }
 
 var calculateCmd = &cobra.Command{
-	Use:   "calculate",
-	Short: "Calculate the traveltime between one address and many other addresses.",
-	Long:  "Calculate the traveltime between one address and many other addresses.",
+	Use:     "calculate",
+	Short:   "Calculate the traveltime between one address and many other addresses.",
+	Long:    "Calculate the travel time from the first argument given to each of the remainder arguments given.",
+	Example: "calcluate London Paris Brussels",
+	Args:    cobra.MinimumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
+		ctx := context.TODO()
+		origin := Address(args[0])
+		destinatations := make([]Address, len(args)-1)
+		for i := 0; i < len(args)-1; i++ {
+			destinatations[i] = Address(args[i+1])
+		}
+
+		result, err := ComputeTravelTime(ctx, origin, destinatations[0])
+		if err != nil {
+			log.Fatalf("%v", err)
+		}
+		fmt.Println(result)
 	},
 }
 
@@ -46,5 +62,5 @@ func init() {
 }
 
 func main() {
-	cmd.Execute()
+	rootCmd.Execute()
 }

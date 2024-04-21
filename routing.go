@@ -47,7 +47,10 @@ func WithRoutingPreference(preference RoutingPreference) ComputeTransitTravelTim
 }
 
 type ComputeTravelTimeResult struct {
-	duration time.Duration
+	Origin      Address
+	Destination Address
+	Duration    time.Duration
+	Options     computeTransitTravelTimeOptions
 }
 
 type Address string
@@ -118,7 +121,7 @@ func computeTravelTime(ctx context.Context, origin Address, destination Address,
 		return ComputeTravelTimeResult{}, err
 	}
 
-	return ComputeTravelTimeResult{duration: resp.Routes[0].Duration.AsDuration()}, nil
+	return ComputeTravelTimeResult{Origin: origin, Destination: destination, Duration: resp.Routes[0].Duration.AsDuration(), Options: opts}, nil
 }
 
 var toRoutingpbRoutingPrefernce map[RoutingPreference]routingpb.TransitPreferences_TransitRoutingPreference = map[RoutingPreference]routingpb.TransitPreferences_TransitRoutingPreference{

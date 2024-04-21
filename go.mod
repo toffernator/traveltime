@@ -5,6 +5,7 @@ go 1.21.8
 require (
 	cloud.google.com/go/maps v1.7.2
 	github.com/spf13/cobra v1.8.0
+	golang.org/x/net v0.22.0
 	google.golang.org/grpc v1.62.1
 )
 
@@ -28,7 +29,6 @@ require (
 	go.opentelemetry.io/otel/metric v1.24.0 // indirect
 	go.opentelemetry.io/otel/trace v1.24.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
-	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/oauth2 v0.18.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
