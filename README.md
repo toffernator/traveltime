@@ -1,0 +1,3 @@
+- [ ] Be able to read a configuration file
+- [ ] Be able to define destinations in the configuration files
+- [ ] Report both the least walking and fewest transfers

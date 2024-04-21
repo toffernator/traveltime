@@ -2,17 +2,30 @@ package googleroutes
 
 import (
 	"context"
-	"time"
 
 	routing "cloud.google.com/go/maps/routing/apiv2"
 	"cloud.google.com/go/maps/routing/apiv2/routingpb"
 	"google.golang.org/grpc/metadata"
 )
 
-func CalculateTravelTime(ctx context.Context, origin *routingpb.Waypoint, destination *routingpb.Waypoint) (time.Duration, error) {
+type RouteComputationOpts struct {
+	RoutingPreference  routingpb.TransitPreferences_TransitRoutingPreference
+	AllowedTravelModes []routingpb.TransitPreferences_TransitTravelMode
+}
+
+var DefaultRouteComputationOpts RouteComputationOpts = RouteComputationOpts{
+	RoutingPreference: routingpb.TransitPreferences_FEWER_TRANSFERS,
+	AllowedTravelModes: []routingpb.TransitPreferences_TransitTravelMode{
+		routingpb.TransitPreferences_BUS,
+		routingpb.TransitPreferences_LIGHT_RAIL,
+		routingpb.TransitPreferences_RAIL,
+	},
+}
+
+func ComputeRoute(ctx context.Context, origin *routingpb.Waypoint, destination *routingpb.Waypoint, opts RouteComputationOpts) (*routingpb.ComputeRoutesResponse, error) {
 	routesClient, err := routing.NewRoutesClient(ctx)
 	if err != nil {
-		return time.Duration(0), err
+		return nil, err
 	}
 	defer routesClient.Close()
 
@@ -21,19 +34,16 @@ func CalculateTravelTime(ctx context.Context, origin *routingpb.Waypoint, destin
 		Destination: destination,
 		TravelMode:  routingpb.RouteTravelMode_TRANSIT,
 		TransitPreferences: &routingpb.TransitPreferences{
-			// TODO: Calculate and report both
-			RoutingPreference: routingpb.TransitPreferences_FEWER_TRANSFERS,
-			// TODO: Allowed travelmodes
+			RoutingPreference:  opts.RoutingPreference,
+			AllowedTravelModes: opts.AllowedTravelModes,
 		},
 	}
 
-	// ctx = metadata.AppendToOutgoingContext(ctx, "X-Goog-FieldMask", "routes.localizedValues")
 	ctx = metadata.AppendToOutgoingContext(ctx, "X-Goog-FieldMask", "*")
 	resp, err := routesClient.ComputeRoutes(ctx, req)
 	if err != nil {
-		return time.Duration(0), err
+		return nil, err
 	}
 
-	duration := resp.Routes[0].Duration.AsDuration()
-	return duration, nil
+	return resp, nil
 }

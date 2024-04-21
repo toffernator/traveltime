@@ -37,7 +37,7 @@ var calculateCmd = &cobra.Command{
 			},
 		}
 
-		duration, _ := googleroutes.CalculateTravelTime(context.TODO(), origin, destination)
+		duration, _ := googleroutes.ComputeRoute(context.TODO(), origin, destination, googleroutes.DefaultRouteComputationOpts)
 		fmt.Println(duration)
 	},
 }
