@@ -1,4 +1,4 @@
-module example.com
+module github.com/toffernator/traveltime
 
 go 1.21.8
 
@@ -7,6 +7,7 @@ require (
 	github.com/spf13/cobra v1.8.0
 	golang.org/x/net v0.22.0
 	google.golang.org/grpc v1.62.1
+	google.golang.org/protobuf v1.33.0
 )
 
 require (
@@ -39,5 +40,4 @@ require (
 	google.golang.org/genproto v0.0.0-20240213162025-012b6fc9bca9 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240401170217-c3f982113cda // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240401170217-c3f982113cda // indirect
-	google.golang.org/protobuf v1.33.0 // indirect
 )

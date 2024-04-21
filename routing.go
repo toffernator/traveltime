@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strings"
 	"time"
 
 	routing "cloud.google.com/go/maps/routing/apiv2"
@@ -168,4 +169,15 @@ func nearestTuesdayAt1000Utc() time.Time {
 	default:
 		return todayAt1000Utc
 	}
+}
+
+func PresentComputeTravelTimeResult(result ComputeTravelTimeResult) string {
+	stringBuilder := strings.Builder{}
+	stringBuilder.WriteString(string(result.Origin))
+	stringBuilder.WriteString(" -> ")
+	stringBuilder.WriteString(string(result.Destination))
+	stringBuilder.WriteString(" in ")
+	stringBuilder.WriteString(result.Duration.String())
+
+	return stringBuilder.String()
 }

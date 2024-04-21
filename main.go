@@ -43,7 +43,7 @@ var calculateCmd = &cobra.Command{
 				if result, err := ComputeTravelTime(ctx, origin, d); err != nil {
 					log.Printf("Failed to compute travel time from %s to %s: %v", origin, d, err)
 				} else {
-					fmt.Println(result)
+					fmt.Println(PresentComputeTravelTimeResult(result))
 				}
 			}()
 		}
