@@ -32,11 +32,13 @@ var calculateCmd = &cobra.Command{
 			destinatations[i] = Address(args[i+1])
 		}
 
-		result, err := ComputeTravelTime(ctx, origin, destinatations[0])
-		if err != nil {
-			log.Fatalf("%v", err)
+		for _, d := range destinatations {
+			result, err := ComputeTravelTime(ctx, origin, d)
+			if err != nil {
+				log.Fatalf("%v", err)
+			}
+			fmt.Println(result)
 		}
-		fmt.Println(result)
 	},
 }
 
