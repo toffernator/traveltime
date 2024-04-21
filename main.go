@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
+	"sync"
 
 	"github.com/spf13/cobra"
 )
@@ -32,13 +32,18 @@ var calculateCmd = &cobra.Command{
 			destinatations[i] = Address(args[i+1])
 		}
 
-		for _, d := range destinatations {
-			result, err := ComputeTravelTime(ctx, origin, d)
-			if err != nil {
-				log.Fatalf("%v", err)
-			}
-			fmt.Println(result)
+		var wg sync.WaitGroup
+		for i := 0; i < len(destinatations); i++ {
+			wg.Add(1)
+			d := destinatations[i]
+			go func() {
+				defer wg.Done()
+
+				result, _ := ComputeTravelTime(ctx, origin, d)
+				fmt.Println(result)
+			}()
 		}
+		wg.Wait()
 	},
 }
 
