@@ -115,7 +115,7 @@ func computeTravelTime(ctx context.Context, origin Address, destination Address,
 		TransitPreferences: transitPreferences,
 	}
 
-	ctx = metadata.AppendToOutgoingContext(ctx, "X-Goog-FieldMask", "*")
+	ctx = metadata.AppendToOutgoingContext(ctx, "X-Goog-FieldMask", "routes.duration")
 	resp, err := routesClient.ComputeRoutes(ctx, req)
 	if err != nil {
 		return ComputeTravelTimeResult{}, err

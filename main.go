@@ -44,6 +44,7 @@ var calculateCmd = &cobra.Command{
 			}()
 		}
 		wg.Wait()
+		fmt.Println("Powered by Google, ©2024 Google")
 	},
 }
 
