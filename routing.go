@@ -7,6 +7,7 @@ import (
 	"cloud.google.com/go/maps/routing/apiv2/routingpb"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type TravelMode int
@@ -23,6 +24,7 @@ const (
 type computeTransitTravelTimeOptions struct {
 	allowedTravelModes *map[TravelMode]bool
 	routingPreference  *RoutingPreference
+	departure          *time.Time
 }
 
 type ComputeTransitTravelTimeOptions func(options *computeTransitTravelTimeOptions) error
@@ -42,6 +44,13 @@ func WithAllowedTravelMode(mode TravelMode) ComputeTransitTravelTimeOptions {
 func WithRoutingPreference(preference RoutingPreference) ComputeTransitTravelTimeOptions {
 	return func(options *computeTransitTravelTimeOptions) error {
 		options.routingPreference = &preference
+		return nil
+	}
+}
+
+func WithArrivalTime(arrival time.Time) ComputeTransitTravelTimeOptions {
+	return func(options *computeTransitTravelTimeOptions) error {
+		options.departure = &arrival
 		return nil
 	}
 }
@@ -72,6 +81,10 @@ func ComputeTravelTime(ctx context.Context, origin Address, destination Address,
 			Rail: true,
 			Bus:  true,
 		}
+	}
+	if options.departure == nil {
+		nearestTuesdayAt1000Utc := nearestTuesdayAt1000Utc()
+		options.departure = &nearestTuesdayAt1000Utc
 	}
 
 	return computeTravelTime(ctx, origin, destination, options)
@@ -113,6 +126,7 @@ func computeTravelTime(ctx context.Context, origin Address, destination Address,
 		Destination:        destinationWaypoint,
 		TravelMode:         routingpb.RouteTravelMode_TRANSIT,
 		TransitPreferences: transitPreferences,
+		ArrivalTime:        timestamppb.New(*opts.departure),
 	}
 
 	ctx = metadata.AppendToOutgoingContext(ctx, "X-Goog-FieldMask", "routes.duration")
@@ -132,4 +146,26 @@ var toRoutingpbRoutingPrefernce map[RoutingPreference]routingpb.TransitPreferenc
 var toRoutingpbTravelMode map[TravelMode]routingpb.TransitPreferences_TransitTravelMode = map[TravelMode]routingpb.TransitPreferences_TransitTravelMode{
 	Rail: routingpb.TransitPreferences_RAIL,
 	Bus:  routingpb.TransitPreferences_BUS,
+}
+
+func nearestTuesdayAt1000Utc() time.Time {
+	now := time.Now()
+	todayAt1000Utc := time.Date(now.Year(), now.Month(), now.Day(), 10, 0, 0, 0, time.UTC)
+
+	switch todayAt1000Utc.Weekday() {
+	case time.Wednesday:
+		return todayAt1000Utc.AddDate(0, 0, 6)
+	case time.Thursday:
+		return todayAt1000Utc.AddDate(0, 0, 5)
+	case time.Friday:
+		return todayAt1000Utc.AddDate(0, 0, 4)
+	case time.Saturday:
+		return todayAt1000Utc.AddDate(0, 0, 3)
+	case time.Sunday:
+		return todayAt1000Utc.AddDate(0, 0, 2)
+	case time.Monday:
+		return todayAt1000Utc.AddDate(0, 0, 1)
+	default:
+		return todayAt1000Utc
+	}
 }
