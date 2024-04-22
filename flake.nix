@@ -22,8 +22,8 @@
             src = pkgs.fetchFromGitHub {
               owner = "toffernator";
               repo = pname;
-              rev = "main"; # TODO "v${pname}"
-              hash = "sha256-ZRz0C4x2LFpIk1kQgu86p+cIeqXKnfozlBoaY/NRw6E=";
+              rev = "v${version}";
+              hash = "0v51fawpqig6aw6w3cw8k84h09k4png6c8m5iqw4krnrbgb6cskl";
             };
 
             # https://nixos.org/manual/nixpkgs/stable/#ex-buildGoModule
