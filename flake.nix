@@ -15,18 +15,26 @@
         version = "0.0.1";
         pname = "traveltime";
       in {
-        packages.default = pkgs.buildGoModule {
-          inherit pname version;
+        packages = {
+          default = pkgs.buildGoModule {
+            inherit pname version;
 
-          src = pkgs.fetchFromGitHub {
-            owner = "toffernator";
-            repo = pname;
-            rev = "main"; # TODO "v${pname}"
-            hash = "sha256-ZRz0C4x2LFpIk1kQgu86p+cIeqXKnfozlBoaY/NRw6E=";
+            src = pkgs.fetchFromGitHub {
+              owner = "toffernator";
+              repo = pname;
+              rev = "main"; # TODO "v${pname}"
+              hash = "sha256-ZRz0C4x2LFpIk1kQgu86p+cIeqXKnfozlBoaY/NRw6E=";
+            };
+
+            # https://nixos.org/manual/nixpkgs/stable/#ex-buildGoModule
+            vendorHash = "sha256-sAn0KozBfeYjjIvIdgSWJyfpN6x8uTLmdKrMDsn/6jA=";
           };
 
-          # https://nixos.org/manual/nixpkgs/stable/#ex-buildGoModule
-          vendorHash = "sha256-sAn0KozBfeYjjIvIdgSWJyfpN6x8uTLmdKrMDsn/6jA=";
+          local = pkgs.buildGoModule {
+            inherit pname version;
+            src = ./.;
+            vendorHash = "sha256-sAn0KozBfeYjjIvIdgSWJyfpN6x8uTLmdKrMDsn/6jA=";
+          };
         };
 
         devShells.default = pkgs.mkShell {
