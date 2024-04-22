@@ -19,5 +19,5 @@ nix build github:DeterminateSystems/zero-to-nix
 ## Examples
 
 ```
-traveltime calculate london paris brussels
+traveltime calculate london paris --arriveBy 2024-04-25T09:00:00+01:00
 ```

@@ -25,7 +25,7 @@ const (
 type computeTransitTravelTimeOptions struct {
 	allowedTravelModes *map[TravelMode]bool
 	routingPreference  *RoutingPreference
-	departure          *time.Time
+	arrival            *time.Time
 }
 
 type ComputeTransitTravelTimeOptions func(options *computeTransitTravelTimeOptions) error
@@ -51,7 +51,7 @@ func WithRoutingPreference(preference RoutingPreference) ComputeTransitTravelTim
 
 func WithArrivalTime(arrival time.Time) ComputeTransitTravelTimeOptions {
 	return func(options *computeTransitTravelTimeOptions) error {
-		options.departure = &arrival
+		options.arrival = &arrival
 		return nil
 	}
 }
@@ -83,9 +83,9 @@ func ComputeTravelTime(ctx context.Context, origin Address, destination Address,
 			Bus:  true,
 		}
 	}
-	if options.departure == nil {
+	if options.arrival == nil {
 		nearestTuesdayAt1000Utc := nearestTuesdayAt1000Utc()
-		options.departure = &nearestTuesdayAt1000Utc
+		options.arrival = &nearestTuesdayAt1000Utc
 	}
 
 	return computeTravelTime(ctx, origin, destination, options)
@@ -127,7 +127,7 @@ func computeTravelTime(ctx context.Context, origin Address, destination Address,
 		Destination:        destinationWaypoint,
 		TravelMode:         routingpb.RouteTravelMode_TRANSIT,
 		TransitPreferences: transitPreferences,
-		ArrivalTime:        timestamppb.New(*opts.departure),
+		ArrivalTime:        timestamppb.New(*opts.arrival),
 	}
 
 	ctx = metadata.AppendToOutgoingContext(ctx, "X-Goog-FieldMask", "routes.duration")
