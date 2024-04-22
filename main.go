@@ -13,17 +13,15 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "traveltime",
 	Short: "Tool for calculating travel times from one address to other addresses.",
-	Long:  `TODO`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Long: `Tool for calclating travel times from one address to other addresses. Uses the
+google maprs routes API to provide travel-time calculations`,
 }
 
 var calculateCmd = &cobra.Command{
 	Use:     "calculate",
 	Short:   "Calculate the traveltime between one address and many other addresses.",
 	Long:    "Calculate the travel time from the first argument given to each of the remainder arguments given.",
-	Example: "calcluate London Paris Brussels",
+	Example: "calcluate london paris brussels",
 	Args:    cobra.MinimumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.TODO()

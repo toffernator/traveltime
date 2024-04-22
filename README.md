@@ -1,3 +1,23 @@
-- [ ] Be able to read a configuration file
-- [ ] Be able to define destinations in the configuration files
-- [ ] Report both the least walking and fewest transfers
+# traveltime
+
+## Set-up
+
+To use the application you need to set-up Application Default Credentials (ADC) on Google Cloud.
+In short:
+```sh
+gcloud auth application-default login
+```
+Read more about the process (here)[https://cloud.google.com/docs/authentication/provide-credentials-adc#local-dev].
+
+## Install
+
+
+```
+nix build github:DeterminateSystems/zero-to-nix
+```
+
+## Examples
+
+```
+traveltime calculate london paris brussels
+```
