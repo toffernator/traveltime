@@ -10,16 +10,19 @@
 
   outputs = { nixpkgs, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = nixpkgs.legacyPackages.${system};
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+        version = "0.0.1";
+        pname = "traveltime";
       in {
         packages.default = pkgs.buildGoModule {
-          pname = "traveltime";
-          version = "0.0.1";
+          inherit pname version;
+
           src = pkgs.fetchFromGitHub {
             owner = "toffernator";
-            repo = "traveltime";
-            rev = "main";
-            hash = "sha256-oywarRD+kYXWnqjtEC/IA6pCB8juUHpxVIj0NnjGYOY=";
+            repo = pname;
+            rev = "main"; # TODO "v${pname}"
+            hash = "sha256-ZRz0C4x2LFpIk1kQgu86p+cIeqXKnfozlBoaY/NRw6E=";
           };
 
           # https://nixos.org/manual/nixpkgs/stable/#ex-buildGoModule
