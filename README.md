@@ -7,7 +7,7 @@ In short:
 ```sh
 gcloud auth application-default login
 ```
-Read more about the process (here)[https://cloud.google.com/docs/authentication/provide-credentials-adc#local-dev].
+Read more about the process [here](https://cloud.google.com/docs/authentication/provide-credentials-adc#local-dev).
 
 ## Install
 
