@@ -17,7 +17,14 @@ nix develop -c gcloud auth application-default login
 ## Install
 
 ```sh
-nix build github:toffernator/traveltime
+nix run github:toffernator/traveltime
+```
+
+Alternatively, build from source and place the executable in your `$PATH`:
+
+```sh
+go build 
+mv ./traveltime <SOMEWHERE/IN/YOUR/$PATH>
 ```
 
 ## Examples
@@ -25,3 +32,4 @@ nix build github:toffernator/traveltime
 ```sh
 traveltime calculate london paris --arriveBy 2024-04-25T09:00:00+01:00
 ```
+
