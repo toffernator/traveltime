@@ -23,7 +23,7 @@
               owner = "toffernator";
               repo = pname;
               rev = "v${version}";
-              hash = "0v51fawpqig6aw6w3cw8k84h09k4png6c8m5iqw4krnrbgb6cskl";
+              hash = "sha256-dGpm1lvZ5kk4jqUiZp69ZCYACZqIs8ENV+ZFfLlyoWw=";
             };
 
             # https://nixos.org/manual/nixpkgs/stable/#ex-buildGoModule
